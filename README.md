@@ -11,7 +11,7 @@ Personal portfolio website built with Next.js, GSAP, Spline 3D and smooth scroll
 
 Third version of my personal portfolio website. Built with Next.js App Router, GSAP scroll animations with ScrollTrigger and ScrollSmoother, Spline 3D scenes, Lottie animations and horizontal scrolling sections.
 
-🔗 **Live:** [portfolio-v3-coral-theta.vercel.app](https://portfolio-v3-coral-theta.vercel.app/)
+🔗 **Live:** [portfolio-v3](https://portfolio-v3-coral-theta.vercel.app/)
 
 ## Pages
 
