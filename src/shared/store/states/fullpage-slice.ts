@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-
 export type Anchor =
   | 'first'
   | 'second'
@@ -23,8 +22,8 @@ interface FullpageState {
 
 const anchorBackground: Record<Anchor, 'Light' | 'Dark'> = {
   first: 'Light',
-  second: 'Light',
-  third: 'Dark',
+  second: 'Dark',
+  third: 'Light',
   fourth: 'Light',
   fifth: 'Light',
   sixth: 'Light',
@@ -46,10 +45,7 @@ const FullpageSlice = createSlice({
   name: 'fullpage',
   initialState,
   reducers: {
-    setActiveSlide: (
-      state,
-      action: PayloadAction<[Anchor, Direction]>
-    ) => {
+    setActiveSlide: (state, action: PayloadAction<[Anchor, Direction]>) => {
       const [anchor, direction] = action.payload;
 
       state.slides[anchor].subscribe += 1;
@@ -57,16 +53,12 @@ const FullpageSlice = createSlice({
       state.selectedBackground = anchorBackground[anchor];
     },
 
-    setHeaderBackground: (
-      state,
-      action: PayloadAction<Anchor>
-    ) => {
+    setHeaderBackground: (state, action: PayloadAction<Anchor>) => {
       state.selectedBackground = anchorBackground[action.payload];
     },
   },
 });
 
-export const { setActiveSlide, setHeaderBackground } =
-  FullpageSlice.actions;
+export const { setActiveSlide, setHeaderBackground } = FullpageSlice.actions;
 
 export default FullpageSlice.reducer;

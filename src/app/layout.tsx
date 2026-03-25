@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
+import { AppHeader, AppHeaderWrapper } from '@components-layout';
+import { SmoothProvider, StoreProvider, TransitionProvider } from '@components-providers';
+import { Cursor } from '@components-ui';
+import { GoogleAnalytics } from '@shared-lib';
+import '@styles/animation.css';
 import '@styles/globals.css';
 import '@styles/layout.css';
-import '@styles/animation.css';
-import { SmoothProvider, StoreProvider, TransitionProvider } from '@components-providers';
-import { GoogleAnalytics } from '@shared-lib';
-import { Syne, Oswald } from 'next/font/google';
-import { AppHeader, AppHeaderWrapper } from '@components-layout';
-import { Cursor } from '@components-ui';
+import { Oswald, Syne } from 'next/font/google';
 
 const satoshi = localFont({
   src: '../assets/fonts/satoshi/Satoshi-Variable.woff2',
