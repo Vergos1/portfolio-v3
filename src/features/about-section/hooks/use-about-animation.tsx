@@ -7,16 +7,12 @@ import type { RefObject } from 'react';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-export const useAboutAnimation = (
-  // ✅ ИСПРАВЛЕНО (КАРДИНАЛЬНО): хук теперь принимает ref-скоуп, а не работает глобальными селекторами
-  rootRef: RefObject<HTMLElement | null>,
-) => {
+export const useAboutAnimation = (rootRef: RefObject<HTMLElement | null>) => {
   useGSAP(
     () => {
       const rootEl = rootRef.current;
       if (!rootEl) return;
 
-      // ✅ ИСПРАВЛЕНО: триггер/пин привязываем к ближайшей секции
       const sectionEl =
         (rootEl.closest('.section__2') as HTMLElement | null) ?? rootEl;
 
@@ -24,7 +20,6 @@ export const useAboutAnimation = (
       const p = rootEl.querySelector('p') as HTMLElement | null;
       if (!h1 || !p) return;
 
-      // ✅ ИСПРАВЛЕНО (КАРДИНАЛЬНО): новая хореография — один master timeline (pin + scrub)
       const headingSplit = SplitText.create(h1, { type: 'words,chars' });
       const paragraphSplit = SplitText.create(p, {
         type: 'lines,words',
@@ -53,7 +48,6 @@ export const useAboutAnimation = (
       });
 
       if (prefersReducedMotion) {
-        // ✅ ИСПРАВЛЕНО: reduced motion — без сложных трансформаций
         gsap.set(headingSplit.chars, {
           opacity: 1,
           yPercent: 0,
@@ -86,7 +80,6 @@ export const useAboutAnimation = (
         },
       });
 
-      // Фаза 1: “flip/3D reveal” заголовка по буквам
       tl.to(headingSplit.chars, {
         opacity: 1,
         yPercent: 0,
@@ -97,7 +90,6 @@ export const useAboutAnimation = (
         ease: 'power2.out',
       });
 
-      // Фаза 2: уплотнение/подчёркивание смысла + смена цвета
       tl.to(
         headingSplit.words,
         {
@@ -121,7 +113,6 @@ export const useAboutAnimation = (
         '>-0.2',
       );
 
-      // Фаза 3: параграф по строкам через маску (clip-path) + blur
       tl.to(
         paragraphSplit.lines,
         {
@@ -136,10 +127,9 @@ export const useAboutAnimation = (
         '>-0.05',
       );
 
-      // ✅ ИСПРАВЛЕНО: cleanup — убираем SplitText-обёртки и триггеры
       return () => {
         tl.kill();
-        ScrollTrigger.getAll().forEach((st) => {
+        ScrollTrigger.getAll().forEach(st => {
           if (st.trigger === sectionEl) st.kill();
         });
         headingSplit.revert();
