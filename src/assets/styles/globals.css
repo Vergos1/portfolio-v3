@@ -180,6 +180,11 @@
             @apply text-center font-satoshi font-normal text-colorSecondaryDark;
         }
 
+        .word,
+        .char {
+            display: inline-block;
+        }
+
         h1,
         h2 {
             @apply leading-none;

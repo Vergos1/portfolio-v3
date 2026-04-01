@@ -1,10 +1,15 @@
+'use client';
+
+import { useRef } from 'react';
 import { useAboutAnimation } from '../hooks';
 
 export const AboutWrapper = () => {
-  useAboutAnimation();
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useAboutAnimation(rootRef);
 
   return (
-    <div className="message-content">
+    <div ref={rootRef} className="message-content">
       <div className="flex-center container relative mx-auto">
         <div className="h-full w-full">
           <div className="msg-wrapper">

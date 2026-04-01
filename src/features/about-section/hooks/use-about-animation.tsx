@@ -1,57 +1,151 @@
+'use client';
+
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
+import type { RefObject } from 'react';
 
-export const useAboutAnimation = () => {
-  useGSAP(() => {
-    const firstMsgSplit = SplitText.create('.first-message', {
-      type: 'words',
-    });
-    const paragraphSplit = SplitText.create('.message-content p', {
-      type: 'words,lines',
-      linesClass: 'paragraph-line',
-    });
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
-    const PIN_DURATION = 2500;
-    const H1_END = PIN_DURATION * 0.6;
-    const P_START = PIN_DURATION * 0.55;
+export const useAboutAnimation = (
+  // ✅ ИСПРАВЛЕНО (КАРДИНАЛЬНО): хук теперь принимает ref-скоуп, а не работает глобальными селекторами
+  rootRef: RefObject<HTMLElement | null>,
+) => {
+  useGSAP(
+    () => {
+      const rootEl = rootRef.current;
+      if (!rootEl) return;
 
-    ScrollTrigger.create({
-      trigger: '.section__2',
-      pin: true,
-      start: 'center center',
-      end: `+=${PIN_DURATION}`,
-      anticipatePin: 1,
-    });
+      // ✅ ИСПРАВЛЕНО: триггер/пин привязываем к ближайшей секции
+      const sectionEl =
+        (rootEl.closest('.section__2') as HTMLElement | null) ?? rootEl;
 
-    gsap.to(firstMsgSplit.words, {
-      color: 'var(--colorDark)',
-      ease: 'none',
-      stagger: 1,
-      scrollTrigger: {
-        trigger: '.section__2',
-        start: 'center center',
-        end: `+=${H1_END}`,
-        scrub: 0.8,
-      },
-    });
+      const h1 = rootEl.querySelector('.first-message') as HTMLElement | null;
+      const p = rootEl.querySelector('p') as HTMLElement | null;
+      if (!h1 || !p) return;
 
-    // Параграф — влетает после h1
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: '.section__2',
-          start: `center center+=${P_START}`,
-          end: `center center+=${PIN_DURATION}`,
-          scrub: 0.8,
-        },
-      })
-      .from(paragraphSplit.words, {
-        yPercent: 110,
-        rotate: 3,
-        ease: 'power2.out',
-        duration: 1,
-        stagger: 0.015,
+      // ✅ ИСПРАВЛЕНО (КАРДИНАЛЬНО): новая хореография — один master timeline (pin + scrub)
+      const headingSplit = SplitText.create(h1, { type: 'words,chars' });
+      const paragraphSplit = SplitText.create(p, {
+        type: 'lines,words',
+        linesClass: 'paragraph-line',
       });
-  });
+
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+
+      gsap.set(h1, { transformPerspective: 800 });
+      gsap.set(headingSplit.chars, {
+        opacity: 0,
+        yPercent: 120,
+        rotateX: -70,
+        transformOrigin: '50% 100%',
+        filter: 'blur(8px)',
+      });
+      gsap.set(headingSplit.words, { color: 'var(--colorSecondaryLight)' });
+
+      gsap.set(paragraphSplit.lines, {
+        opacity: 0,
+        yPercent: 60,
+        filter: 'blur(10px)',
+        clipPath: 'inset(0 0 100% 0)',
+      });
+
+      if (prefersReducedMotion) {
+        // ✅ ИСПРАВЛЕНО: reduced motion — без сложных трансформаций
+        gsap.set(headingSplit.chars, {
+          opacity: 1,
+          yPercent: 0,
+          rotateX: 0,
+          filter: 'none',
+        });
+        gsap.set(headingSplit.words, { color: 'var(--colorDark)' });
+        gsap.set(paragraphSplit.lines, {
+          opacity: 1,
+          yPercent: 0,
+          filter: 'none',
+          clipPath: 'inset(0 0 0% 0)',
+        });
+
+        return () => {
+          headingSplit.revert();
+          paragraphSplit.revert();
+        };
+      }
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionEl,
+          start: 'center center',
+          end: '+=2800',
+          scrub: 0.9,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Фаза 1: “flip/3D reveal” заголовка по буквам
+      tl.to(headingSplit.chars, {
+        opacity: 1,
+        yPercent: 0,
+        rotateX: 0,
+        filter: 'blur(0px)',
+        stagger: { each: 0.01, from: 'start' },
+        duration: 0.9,
+        ease: 'power2.out',
+      });
+
+      // Фаза 2: уплотнение/подчёркивание смысла + смена цвета
+      tl.to(
+        headingSplit.words,
+        {
+          color: 'var(--colorDark)',
+          yPercent: -6,
+          duration: 0.55,
+          stagger: { each: 0.06, from: 'center' },
+          ease: 'power1.out',
+        },
+        '>-0.15',
+      );
+
+      tl.to(
+        headingSplit.words,
+        {
+          yPercent: 0,
+          duration: 0.35,
+          stagger: { each: 0.03, from: 'center' },
+          ease: 'power1.out',
+        },
+        '>-0.2',
+      );
+
+      // Фаза 3: параграф по строкам через маску (clip-path) + blur
+      tl.to(
+        paragraphSplit.lines,
+        {
+          opacity: 1,
+          yPercent: 0,
+          filter: 'blur(0px)',
+          clipPath: 'inset(0 0 0% 0)',
+          duration: 0.9,
+          stagger: 0.12,
+          ease: 'power2.out',
+        },
+        '>-0.05',
+      );
+
+      // ✅ ИСПРАВЛЕНО: cleanup — убираем SplitText-обёртки и триггеры
+      return () => {
+        tl.kill();
+        ScrollTrigger.getAll().forEach((st) => {
+          if (st.trigger === sectionEl) st.kill();
+        });
+        headingSplit.revert();
+        paragraphSplit.revert();
+      };
+    },
+    { scope: rootRef },
+  );
 };
