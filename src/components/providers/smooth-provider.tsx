@@ -1,25 +1,29 @@
 'use client';
+import { useGSAP } from '@gsap/react';
 import { smoothConfig } from '@shared-config';
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { CustomEase, ScrollSmoother, ScrollTrigger } from "gsap/all";
+import gsap from 'gsap';
+import { CustomEase, ScrollSmoother, ScrollTrigger, SplitText } from 'gsap/all';
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, CustomEase, useGSAP);
+gsap.registerPlugin(
+  ScrollTrigger,
+  ScrollSmoother,
+  SplitText,
+  CustomEase,
+  useGSAP,
+);
 
 export const SmoothProvider = ({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) => {
-    useGSAP(() => {
-        ScrollSmoother.create(smoothConfig);
-    });
+  useGSAP(() => {
+    ScrollSmoother.create(smoothConfig);
+  });
 
-    return (
-        <div id="smooth-wrapper">
-            <div id="smooth-content">
-                {children}
-            </div>
-        </div>
-    );
+  return (
+    <div id="smooth-wrapper">
+      <div id="smooth-content">{children}</div>
+    </div>
+  );
 };

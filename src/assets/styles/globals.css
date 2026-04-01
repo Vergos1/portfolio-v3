@@ -174,10 +174,6 @@
             h1:first-of-type {
                 @apply 2xl:max-w-4xl md:max-w-2xl font-extrabold max-w-xs text-center text-colorSecondaryLight tracking-[-.2vw];
             }
-
-            h1:last-of-type {
-                @apply 2xl:max-w-7xl md:max-w-4xl font-extrabold max-w-xs text-center text-colorSecondaryLight tracking-[-.2vw];
-            }
         }
 
         p {

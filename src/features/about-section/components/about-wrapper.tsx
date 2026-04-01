@@ -11,9 +11,7 @@ export const AboutWrapper = () => {
           <div className="msg-wrapper">
             <h1 className="first-message">
               Every line of <br /> code has a story
-            </h1>
-
-            <h1 className="second-message">
+              <br />
               Scroll to <br /> see where <br /> ideas became real
             </h1>
           </div>
