@@ -5,8 +5,6 @@ import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
 import type { RefObject } from 'react';
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
-
 export const useAboutAnimation = (rootRef: RefObject<HTMLElement | null>) => {
   useGSAP(
     () => {

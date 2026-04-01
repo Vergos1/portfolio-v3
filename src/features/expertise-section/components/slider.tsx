@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef } from 'react';
 import { projectsList } from '../constants';
 import { useSliderAnimation } from '../hooks/use-slider-animation';
@@ -16,8 +18,10 @@ export const Slider = () => {
           >
             <img
               src={`/images/projects-test/mockup-1.png`}
-              alt=""
+              alt={`${flavor.name} mockup`}
               className="absolute -top-[200px]"
+              loading="lazy"
+              decoding="async"
             />
 
             {/* <img
