@@ -3,9 +3,9 @@ import { Title } from './title';
 
 export const ExpertiseWrapper = () => {
   return (
-    <div className='flavor-section'>
-      <div className="h-full flex lg:flex-row flex-col items-center relative">
-        <div className="lg:w-[57%] flex-none h-80 lg:h-full md:mt-20 xl:mt-0">
+    <div className="flavor-section">
+      <div className="relative flex h-full flex-col items-center lg:flex-row">
+        <div className="h-80 flex-none md:mt-20 lg:h-full lg:w-[100%] xl:mt-0">
           <Title />
         </div>
         <div className="h-full">
