@@ -1,5 +1,4 @@
 import { useAboutAnimation } from '../hooks';
-import { MarqueeRow } from './marquee-row';
 
 export const AboutWrapper = () => {
   useAboutAnimation();

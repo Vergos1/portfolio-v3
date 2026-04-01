@@ -8,7 +8,7 @@ export const ExpertiseWrapper = () => {
         <div className="h-80 flex-none md:mt-20 lg:h-full lg:w-[100%] xl:mt-0">
           <Title />
         </div>
-        <div className="h-full">
+        <div className="ml-36 h-full">
           <Slider />
         </div>
       </div>
