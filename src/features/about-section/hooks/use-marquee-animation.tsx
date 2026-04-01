@@ -1,31 +1,53 @@
+'use client';
+
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import type { RefObject } from 'react';
 
-export const useMarqueeAnimation = () => {
-    useGSAP(() => {
-        const track = document.querySelector(".marquee-track") as HTMLElement;
-        if (track) {
-            const totalWidth = track.scrollWidth / 2;
-            gsap.to(track, {
-                x: -totalWidth,
-                duration: 60,
-                ease: "none",
-                repeat: -1,
-            });
-        }
+export const useMarqueeAnimation = ({
+  wrapperRef,
+  trackRef,
+  reverse = false,
+}: {
+  wrapperRef: RefObject<HTMLElement | null>;
+  trackRef: RefObject<HTMLElement | null>;
+  reverse?: boolean;
+}) => {
+  useGSAP(
+    () => {
+      const wrapperEl = wrapperRef.current;
+      const trackEl = trackRef.current;
+      if (!wrapperEl || !trackEl) return;
 
-        gsap.fromTo(".marquee-wrapper",
-            { opacity: 0, y: 20 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: ".marquee-wrapper",
-                    start: "top 80%",
-                },
-            }
-        );
-    });
+      const totalWidth = trackEl.scrollWidth / 2;
+      if (!totalWidth) return;
+
+      const marqueeTween = gsap.to(trackEl, {
+        x: reverse ? totalWidth : -totalWidth,
+        duration: 60,
+        ease: 'none',
+        repeat: -1,
+      });
+
+      gsap.fromTo(
+        wrapperEl,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: wrapperEl,
+            start: 'top 80%',
+          },
+        },
+      );
+
+      return () => {
+        marqueeTween.kill();
+      };
+    },
+    { scope: wrapperRef },
+  );
 };
